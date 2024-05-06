@@ -1,0 +1,310 @@
+version: '3'
+
+
+services:
+  auth_db:
+    image: postgres:13
+    container_name: auth_db
+    restart: always
+    volumes:
+      - auth_db_data:/var/lib/postgresql
+    env_file:
+      - ./.env
+    environment:
+      - POSTGRES_DB=${AUTH_API_POSTGRES_DB}
+      - POSTGRES_USER=${AUTH_API_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${AUTH_API_POSTGRES_PASSWORD}
+      - POSTGRES_PORT=${AUTH_API_POSTGRES_PORT}
+      - POSTGRES_HOST=${AUTH_API_POSTGRES_HOST}
+    healthcheck:
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB'" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  movies_db:
+    image: postgres:13-alpine
+    container_name: movies_db
+    restart: always
+    volumes:
+      - movies_db_data:/var/lib/postgresql/data/
+      - ./admin_panel/init_db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    env_file:
+      - ./.env
+    environment:
+      - POSTGRES_DB=${MOVIES_API_POSTGRES_DB}
+      - POSTGRES_USER=${MOVIES_API_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${MOVIES_API_POSTGRES_PASSWORD}
+      - POSTGRES_PORT=${MOVIES_API_POSTGRES_PORT}
+      - POSTGRES_HOST=${MOVIES_API_POSTGRES_HOST}
+    healthcheck:
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB'" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  billing_db:
+    image: postgres:13
+    container_name: billing_db
+    restart: always
+    env_file:
+      - ./.env
+    environment:
+      - POSTGRES_DB=${BILLING_API_POSTGRES_DB}
+      - POSTGRES_USER=${BILLING_API_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${BILLING_API_POSTGRES_PASSWORD}
+      - POSTGRES_PORT=${BILLING_API_POSTGRES_PORT}
+      - POSTGRES_HOST=${BILLING_API_POSTGRES_HOST}
+    ports:
+      - "5436:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB'" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    env_file:
+      - ./.env
+    restart: always
+
+  elastic:
+    image: elasticsearch:8.6.2
+    container_name: elastic
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms200m -Xmx200m
+    restart: always
+    ports:
+      - 9200:9200
+    volumes:
+      - es_data:/usr/share/elastic/data
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --silent --fail localhost:9200/_cluster/health || exit 1" ]
+      interval: 10s
+      timeout: 30s
+      retries: 50
+
+  etl:
+    build: postgres_to_es
+    container_name: etl
+    restart: always
+    env_file: ./.env
+    environment:
+      - POSTGRES_DB=movies_database
+      - POSTGRES_HOST=movies_db
+    depends_on:
+      movies_api:
+        condition: service_started
+      admin_panel:
+        condition: service_started
+      movies_db:
+        condition: service_healthy
+      elastic:
+        condition: service_healthy
+    entrypoint: [ "python", "main.py" ]
+
+  admin_panel:
+    build: admin_panel
+    command: >
+      /bin/bash -c " python manage.py collectstatic --noinput &&
+        python manage.py makemigrations &&
+        python manage.py migrate &&
+        cd sqlite_to_postgres && python load_data.py &&
+        cd .. && uwsgi --strict --ini uwsgi.ini"
+    depends_on:
+      movies_db:
+        condition: service_healthy
+    env_file:
+      - .env
+    volumes:
+      - static_volume_admin_panel:/opt/app/static
+    expose:
+      - 8000
+
+  movies_api:
+    container_name: movies_api
+    build: ./movies_api
+    env_file: .env
+    depends_on:
+      movies_db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - movies_api_logs:/opt/app/logs
+
+  auth_api:
+    container_name: auth_api
+    build: ./auth_api
+    env_file: .env
+    depends_on:
+      auth_db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - auth_api_logs:/opt/app/src/logs
+    ports:
+      - "8000:8000"
+
+  billing_api:
+    container_name: billing_api
+    build: ./billing_api
+    env_file: .env
+    depends_on:
+      billing_db:
+        condition: service_healthy
+    ports:
+      - "8001:8000"
+
+    volumes:
+      - static_volume_billing_admin:/opt/app/venv/lib/python3.10/site-packages/sqladmin/statics
+      - billing_api_logs:/opt/app/logs
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    depends_on:
+      billing_api:
+        condition: service_started
+      movies_api:
+        condition: service_started
+      auth_api:
+        condition: service_started
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/site.conf:/etc/nginx/conf.d/site.conf:ro
+      - static_volume_admin_panel:/app/static
+      - static_volume_billing_admin:/app/api/v1/billing/admin/statics/
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.49.0
+    ports:
+      - "16686:16686"
+
+
+
+
+  # ************* logging *****************
+  elastic-logging:
+    image: elasticsearch:8.10.2
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "9201:9200"
+    volumes:
+      - es_logging_data:/usr/share/elastic/data
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --silent --fail localhost:9200/_cluster/health || exit 1" ]
+      interval: 10s
+      timeout: 30s
+      retries: 10
+
+  logstash:
+    image: logstash:8.10.2
+    depends_on:
+      elastic-logging:
+        condition: service_healthy
+    environment:
+      XPACK_MONITORING_ENABLED: "false"
+      ES_HOST: "elastic-logging:9200"
+    ports:
+      - "5044:5044"
+    volumes:
+      - ./logstash/logstash.conf:/config/logstash.conf:ro
+    command: logstash -f /config/logstash.conf
+
+  kibana:
+    image: kibana:8.10.2
+    ports:
+      - "5601:5601"
+    depends_on:
+      elastic-logging:
+        condition: service_healthy
+    environment:
+      ELASTICSEARCH_HOSTS: http://elastic-logging:9200
+
+
+  filebeat_auth_api:
+    container_name: filebeat_auth_api
+    image: elastic/filebeat:8.10.2
+    volumes:
+      - auth_api_logs:/var/logs/auth_api:ro
+      - ./auth_api/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml
+    depends_on:
+      - auth_api
+      - nginx
+      - logstash
+      - elastic-logging
+      - kibana
+    links:
+      - logstash
+
+  filebeat_movies_api:
+    container_name: filebeat_movies_api
+    image: elastic/filebeat:8.10.2
+    volumes:
+      - movies_api_logs:/var/logs/movies_api:ro
+      - ./movies_api/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml
+    depends_on:
+      - movies_api
+      - nginx
+      - logstash
+      - elastic-logging
+      - kibana
+    links:
+      - logstash
+
+  filebeat_billing_api:
+    container_name: filebeat_billing_api
+    image: elastic/filebeat:8.10.2
+    volumes:
+      - billing_api_logs:/var/logs/billing_api:ro
+      - ./billing_api/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml
+    depends_on:
+      - billing_api
+      - nginx
+      - logstash
+      - elastic-logging
+      - kibana
+    links:
+      - logstash
+
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+
+    restart: unless-stopped
+
+volumes:
+  auth_db_data:
+  movies_db_data:
+  es_logging_data:
+  es_data:
+  redis_data:
+  auth_api_logs:
+  movies_api_logs:
+  billing_api_logs:
+  static_volume_admin_panel:
+  static_volume_billing_admin:
+  pgadmin:

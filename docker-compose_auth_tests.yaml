@@ -1,0 +1,44 @@
+version: '3'
+services:
+  auth_db:
+    image: postgres:13
+    env_file:
+      - ./auth_api/tests/functional/.env
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB'" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:alpine
+    command: redis-server --save 20 1 --loglevel warning
+    ports:
+      - "6379:6379"
+
+  auth_service:
+    build: ./auth_api
+    env_file: auth_api/.env
+    ports:
+      - "8000:8000"
+    depends_on:
+      auth_db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  tests:
+    build:
+      context: ./auth_api/
+      dockerfile: ./tests/functional/Dockerfile
+    env_file:
+      - ./auth_api/tests/functional/.env
+    depends_on:
+      auth_service:
+        condition: service_started
+      redis:
+        condition: service_started
+      auth_db:
+        condition: service_healthy

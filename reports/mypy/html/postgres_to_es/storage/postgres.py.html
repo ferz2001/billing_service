@@ -1,0 +1,440 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" type="text/css" href="../../../mypy-html.css">
+</head>
+<body>
+<h2>postgres_to_es.storage.postgres</h2>
+<table>
+<caption>postgres_to_es\storage\postgres.py</caption>
+<tbody><tr>
+<td class="table-lines"><pre><span id="L1" class="lineno"><a class="lineno" href="#L1">1</a></span>
+<span id="L2" class="lineno"><a class="lineno" href="#L2">2</a></span>
+<span id="L3" class="lineno"><a class="lineno" href="#L3">3</a></span>
+<span id="L4" class="lineno"><a class="lineno" href="#L4">4</a></span>
+<span id="L5" class="lineno"><a class="lineno" href="#L5">5</a></span>
+<span id="L6" class="lineno"><a class="lineno" href="#L6">6</a></span>
+<span id="L7" class="lineno"><a class="lineno" href="#L7">7</a></span>
+<span id="L8" class="lineno"><a class="lineno" href="#L8">8</a></span>
+<span id="L9" class="lineno"><a class="lineno" href="#L9">9</a></span>
+<span id="L10" class="lineno"><a class="lineno" href="#L10">10</a></span>
+<span id="L11" class="lineno"><a class="lineno" href="#L11">11</a></span>
+<span id="L12" class="lineno"><a class="lineno" href="#L12">12</a></span>
+<span id="L13" class="lineno"><a class="lineno" href="#L13">13</a></span>
+<span id="L14" class="lineno"><a class="lineno" href="#L14">14</a></span>
+<span id="L15" class="lineno"><a class="lineno" href="#L15">15</a></span>
+<span id="L16" class="lineno"><a class="lineno" href="#L16">16</a></span>
+<span id="L17" class="lineno"><a class="lineno" href="#L17">17</a></span>
+<span id="L18" class="lineno"><a class="lineno" href="#L18">18</a></span>
+<span id="L19" class="lineno"><a class="lineno" href="#L19">19</a></span>
+<span id="L20" class="lineno"><a class="lineno" href="#L20">20</a></span>
+<span id="L21" class="lineno"><a class="lineno" href="#L21">21</a></span>
+<span id="L22" class="lineno"><a class="lineno" href="#L22">22</a></span>
+<span id="L23" class="lineno"><a class="lineno" href="#L23">23</a></span>
+<span id="L24" class="lineno"><a class="lineno" href="#L24">24</a></span>
+<span id="L25" class="lineno"><a class="lineno" href="#L25">25</a></span>
+<span id="L26" class="lineno"><a class="lineno" href="#L26">26</a></span>
+<span id="L27" class="lineno"><a class="lineno" href="#L27">27</a></span>
+<span id="L28" class="lineno"><a class="lineno" href="#L28">28</a></span>
+<span id="L29" class="lineno"><a class="lineno" href="#L29">29</a></span>
+<span id="L30" class="lineno"><a class="lineno" href="#L30">30</a></span>
+<span id="L31" class="lineno"><a class="lineno" href="#L31">31</a></span>
+<span id="L32" class="lineno"><a class="lineno" href="#L32">32</a></span>
+<span id="L33" class="lineno"><a class="lineno" href="#L33">33</a></span>
+<span id="L34" class="lineno"><a class="lineno" href="#L34">34</a></span>
+<span id="L35" class="lineno"><a class="lineno" href="#L35">35</a></span>
+<span id="L36" class="lineno"><a class="lineno" href="#L36">36</a></span>
+<span id="L37" class="lineno"><a class="lineno" href="#L37">37</a></span>
+<span id="L38" class="lineno"><a class="lineno" href="#L38">38</a></span>
+<span id="L39" class="lineno"><a class="lineno" href="#L39">39</a></span>
+<span id="L40" class="lineno"><a class="lineno" href="#L40">40</a></span>
+<span id="L41" class="lineno"><a class="lineno" href="#L41">41</a></span>
+<span id="L42" class="lineno"><a class="lineno" href="#L42">42</a></span>
+<span id="L43" class="lineno"><a class="lineno" href="#L43">43</a></span>
+<span id="L44" class="lineno"><a class="lineno" href="#L44">44</a></span>
+<span id="L45" class="lineno"><a class="lineno" href="#L45">45</a></span>
+<span id="L46" class="lineno"><a class="lineno" href="#L46">46</a></span>
+<span id="L47" class="lineno"><a class="lineno" href="#L47">47</a></span>
+<span id="L48" class="lineno"><a class="lineno" href="#L48">48</a></span>
+<span id="L49" class="lineno"><a class="lineno" href="#L49">49</a></span>
+<span id="L50" class="lineno"><a class="lineno" href="#L50">50</a></span>
+<span id="L51" class="lineno"><a class="lineno" href="#L51">51</a></span>
+<span id="L52" class="lineno"><a class="lineno" href="#L52">52</a></span>
+<span id="L53" class="lineno"><a class="lineno" href="#L53">53</a></span>
+<span id="L54" class="lineno"><a class="lineno" href="#L54">54</a></span>
+<span id="L55" class="lineno"><a class="lineno" href="#L55">55</a></span>
+<span id="L56" class="lineno"><a class="lineno" href="#L56">56</a></span>
+<span id="L57" class="lineno"><a class="lineno" href="#L57">57</a></span>
+<span id="L58" class="lineno"><a class="lineno" href="#L58">58</a></span>
+<span id="L59" class="lineno"><a class="lineno" href="#L59">59</a></span>
+<span id="L60" class="lineno"><a class="lineno" href="#L60">60</a></span>
+<span id="L61" class="lineno"><a class="lineno" href="#L61">61</a></span>
+<span id="L62" class="lineno"><a class="lineno" href="#L62">62</a></span>
+<span id="L63" class="lineno"><a class="lineno" href="#L63">63</a></span>
+<span id="L64" class="lineno"><a class="lineno" href="#L64">64</a></span>
+<span id="L65" class="lineno"><a class="lineno" href="#L65">65</a></span>
+<span id="L66" class="lineno"><a class="lineno" href="#L66">66</a></span>
+<span id="L67" class="lineno"><a class="lineno" href="#L67">67</a></span>
+<span id="L68" class="lineno"><a class="lineno" href="#L68">68</a></span>
+<span id="L69" class="lineno"><a class="lineno" href="#L69">69</a></span>
+<span id="L70" class="lineno"><a class="lineno" href="#L70">70</a></span>
+<span id="L71" class="lineno"><a class="lineno" href="#L71">71</a></span>
+<span id="L72" class="lineno"><a class="lineno" href="#L72">72</a></span>
+<span id="L73" class="lineno"><a class="lineno" href="#L73">73</a></span>
+<span id="L74" class="lineno"><a class="lineno" href="#L74">74</a></span>
+<span id="L75" class="lineno"><a class="lineno" href="#L75">75</a></span>
+<span id="L76" class="lineno"><a class="lineno" href="#L76">76</a></span>
+<span id="L77" class="lineno"><a class="lineno" href="#L77">77</a></span>
+<span id="L78" class="lineno"><a class="lineno" href="#L78">78</a></span>
+<span id="L79" class="lineno"><a class="lineno" href="#L79">79</a></span>
+<span id="L80" class="lineno"><a class="lineno" href="#L80">80</a></span>
+<span id="L81" class="lineno"><a class="lineno" href="#L81">81</a></span>
+<span id="L82" class="lineno"><a class="lineno" href="#L82">82</a></span>
+<span id="L83" class="lineno"><a class="lineno" href="#L83">83</a></span>
+<span id="L84" class="lineno"><a class="lineno" href="#L84">84</a></span>
+<span id="L85" class="lineno"><a class="lineno" href="#L85">85</a></span>
+<span id="L86" class="lineno"><a class="lineno" href="#L86">86</a></span>
+<span id="L87" class="lineno"><a class="lineno" href="#L87">87</a></span>
+<span id="L88" class="lineno"><a class="lineno" href="#L88">88</a></span>
+<span id="L89" class="lineno"><a class="lineno" href="#L89">89</a></span>
+<span id="L90" class="lineno"><a class="lineno" href="#L90">90</a></span>
+<span id="L91" class="lineno"><a class="lineno" href="#L91">91</a></span>
+<span id="L92" class="lineno"><a class="lineno" href="#L92">92</a></span>
+<span id="L93" class="lineno"><a class="lineno" href="#L93">93</a></span>
+<span id="L94" class="lineno"><a class="lineno" href="#L94">94</a></span>
+<span id="L95" class="lineno"><a class="lineno" href="#L95">95</a></span>
+<span id="L96" class="lineno"><a class="lineno" href="#L96">96</a></span>
+<span id="L97" class="lineno"><a class="lineno" href="#L97">97</a></span>
+<span id="L98" class="lineno"><a class="lineno" href="#L98">98</a></span>
+<span id="L99" class="lineno"><a class="lineno" href="#L99">99</a></span>
+<span id="L100" class="lineno"><a class="lineno" href="#L100">100</a></span>
+<span id="L101" class="lineno"><a class="lineno" href="#L101">101</a></span>
+<span id="L102" class="lineno"><a class="lineno" href="#L102">102</a></span>
+<span id="L103" class="lineno"><a class="lineno" href="#L103">103</a></span>
+<span id="L104" class="lineno"><a class="lineno" href="#L104">104</a></span>
+<span id="L105" class="lineno"><a class="lineno" href="#L105">105</a></span>
+<span id="L106" class="lineno"><a class="lineno" href="#L106">106</a></span>
+<span id="L107" class="lineno"><a class="lineno" href="#L107">107</a></span>
+<span id="L108" class="lineno"><a class="lineno" href="#L108">108</a></span>
+<span id="L109" class="lineno"><a class="lineno" href="#L109">109</a></span>
+<span id="L110" class="lineno"><a class="lineno" href="#L110">110</a></span>
+<span id="L111" class="lineno"><a class="lineno" href="#L111">111</a></span>
+<span id="L112" class="lineno"><a class="lineno" href="#L112">112</a></span>
+<span id="L113" class="lineno"><a class="lineno" href="#L113">113</a></span>
+<span id="L114" class="lineno"><a class="lineno" href="#L114">114</a></span>
+<span id="L115" class="lineno"><a class="lineno" href="#L115">115</a></span>
+<span id="L116" class="lineno"><a class="lineno" href="#L116">116</a></span>
+<span id="L117" class="lineno"><a class="lineno" href="#L117">117</a></span>
+<span id="L118" class="lineno"><a class="lineno" href="#L118">118</a></span>
+<span id="L119" class="lineno"><a class="lineno" href="#L119">119</a></span>
+<span id="L120" class="lineno"><a class="lineno" href="#L120">120</a></span>
+<span id="L121" class="lineno"><a class="lineno" href="#L121">121</a></span>
+<span id="L122" class="lineno"><a class="lineno" href="#L122">122</a></span>
+<span id="L123" class="lineno"><a class="lineno" href="#L123">123</a></span>
+<span id="L124" class="lineno"><a class="lineno" href="#L124">124</a></span>
+<span id="L125" class="lineno"><a class="lineno" href="#L125">125</a></span>
+<span id="L126" class="lineno"><a class="lineno" href="#L126">126</a></span>
+<span id="L127" class="lineno"><a class="lineno" href="#L127">127</a></span>
+<span id="L128" class="lineno"><a class="lineno" href="#L128">128</a></span>
+<span id="L129" class="lineno"><a class="lineno" href="#L129">129</a></span>
+<span id="L130" class="lineno"><a class="lineno" href="#L130">130</a></span>
+<span id="L131" class="lineno"><a class="lineno" href="#L131">131</a></span>
+<span id="L132" class="lineno"><a class="lineno" href="#L132">132</a></span>
+<span id="L133" class="lineno"><a class="lineno" href="#L133">133</a></span>
+<span id="L134" class="lineno"><a class="lineno" href="#L134">134</a></span>
+<span id="L135" class="lineno"><a class="lineno" href="#L135">135</a></span>
+<span id="L136" class="lineno"><a class="lineno" href="#L136">136</a></span>
+<span id="L137" class="lineno"><a class="lineno" href="#L137">137</a></span>
+<span id="L138" class="lineno"><a class="lineno" href="#L138">138</a></span>
+<span id="L139" class="lineno"><a class="lineno" href="#L139">139</a></span>
+<span id="L140" class="lineno"><a class="lineno" href="#L140">140</a></span>
+<span id="L141" class="lineno"><a class="lineno" href="#L141">141</a></span>
+<span id="L142" class="lineno"><a class="lineno" href="#L142">142</a></span>
+<span id="L143" class="lineno"><a class="lineno" href="#L143">143</a></span>
+<span id="L144" class="lineno"><a class="lineno" href="#L144">144</a></span>
+<span id="L145" class="lineno"><a class="lineno" href="#L145">145</a></span>
+<span id="L146" class="lineno"><a class="lineno" href="#L146">146</a></span>
+<span id="L147" class="lineno"><a class="lineno" href="#L147">147</a></span>
+<span id="L148" class="lineno"><a class="lineno" href="#L148">148</a></span>
+<span id="L149" class="lineno"><a class="lineno" href="#L149">149</a></span>
+<span id="L150" class="lineno"><a class="lineno" href="#L150">150</a></span>
+<span id="L151" class="lineno"><a class="lineno" href="#L151">151</a></span>
+<span id="L152" class="lineno"><a class="lineno" href="#L152">152</a></span>
+<span id="L153" class="lineno"><a class="lineno" href="#L153">153</a></span>
+<span id="L154" class="lineno"><a class="lineno" href="#L154">154</a></span>
+<span id="L155" class="lineno"><a class="lineno" href="#L155">155</a></span>
+<span id="L156" class="lineno"><a class="lineno" href="#L156">156</a></span>
+<span id="L157" class="lineno"><a class="lineno" href="#L157">157</a></span>
+<span id="L158" class="lineno"><a class="lineno" href="#L158">158</a></span>
+<span id="L159" class="lineno"><a class="lineno" href="#L159">159</a></span>
+<span id="L160" class="lineno"><a class="lineno" href="#L160">160</a></span>
+<span id="L161" class="lineno"><a class="lineno" href="#L161">161</a></span>
+<span id="L162" class="lineno"><a class="lineno" href="#L162">162</a></span>
+<span id="L163" class="lineno"><a class="lineno" href="#L163">163</a></span>
+<span id="L164" class="lineno"><a class="lineno" href="#L164">164</a></span>
+<span id="L165" class="lineno"><a class="lineno" href="#L165">165</a></span>
+<span id="L166" class="lineno"><a class="lineno" href="#L166">166</a></span>
+<span id="L167" class="lineno"><a class="lineno" href="#L167">167</a></span>
+<span id="L168" class="lineno"><a class="lineno" href="#L168">168</a></span>
+<span id="L169" class="lineno"><a class="lineno" href="#L169">169</a></span>
+<span id="L170" class="lineno"><a class="lineno" href="#L170">170</a></span>
+<span id="L171" class="lineno"><a class="lineno" href="#L171">171</a></span>
+<span id="L172" class="lineno"><a class="lineno" href="#L172">172</a></span>
+<span id="L173" class="lineno"><a class="lineno" href="#L173">173</a></span>
+<span id="L174" class="lineno"><a class="lineno" href="#L174">174</a></span>
+<span id="L175" class="lineno"><a class="lineno" href="#L175">175</a></span>
+<span id="L176" class="lineno"><a class="lineno" href="#L176">176</a></span>
+<span id="L177" class="lineno"><a class="lineno" href="#L177">177</a></span>
+<span id="L178" class="lineno"><a class="lineno" href="#L178">178</a></span>
+<span id="L179" class="lineno"><a class="lineno" href="#L179">179</a></span>
+<span id="L180" class="lineno"><a class="lineno" href="#L180">180</a></span>
+<span id="L181" class="lineno"><a class="lineno" href="#L181">181</a></span>
+<span id="L182" class="lineno"><a class="lineno" href="#L182">182</a></span>
+<span id="L183" class="lineno"><a class="lineno" href="#L183">183</a></span>
+<span id="L184" class="lineno"><a class="lineno" href="#L184">184</a></span>
+<span id="L185" class="lineno"><a class="lineno" href="#L185">185</a></span>
+<span id="L186" class="lineno"><a class="lineno" href="#L186">186</a></span>
+<span id="L187" class="lineno"><a class="lineno" href="#L187">187</a></span>
+<span id="L188" class="lineno"><a class="lineno" href="#L188">188</a></span>
+<span id="L189" class="lineno"><a class="lineno" href="#L189">189</a></span>
+<span id="L190" class="lineno"><a class="lineno" href="#L190">190</a></span>
+<span id="L191" class="lineno"><a class="lineno" href="#L191">191</a></span>
+<span id="L192" class="lineno"><a class="lineno" href="#L192">192</a></span>
+<span id="L193" class="lineno"><a class="lineno" href="#L193">193</a></span>
+<span id="L194" class="lineno"><a class="lineno" href="#L194">194</a></span>
+</pre></td>
+<td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">from typing import Dict, Any</span>
+<span class="line-precise" title="No Anys on this line!">from typing import Union</span>
+<span class="line-precise" title="No Anys on this line!">from types import TracebackType</span>
+<span class="line-precise" title="No Anys on this line!">from collections.abc import Iterator</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-any" title="No Anys on this line!">from logger import logger</span>
+<span class="line-any" title="No Anys on this line!">import psycopg2</span>
+<span class="line-any" title="No Anys on this line!">from psycopg2.extras import DictCursor</span>
+<span class="line-any" title="No Anys on this line!">from utils import backoff</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">class PostgresConn:</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x2)">    def __init__(self, db_config: Dict):</span>
+<span class="line-any" title="Any Types on this line: 
+Explicit (x2)">        self.db_conn: Any = None</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x4)">        self.db_config = db_config</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x2)">    @backoff()</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x1)">    def __enter__(self) -&gt; psycopg2.extensions.connection:</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x3)">        logger.info('trying connection to postgress')</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x4)
+Omitted Generics (x2)
+Explicit (x1)">        self.db_conn = psycopg2.connect(**self.db_config, cursor_factory=DictCursor)</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x3)">        logger.info('connection success')</span>
+<span class="line-any" title="Any Types on this line: 
+Explicit (x1)">        return self.db_conn</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">    def __exit__(self, exception_type: Union[type[BaseException], None], exception_value: Union[BaseException, None],</span>
+<span class="line-empty" title="No Anys on this line!">                 traceback: Union[TracebackType, None]) -&gt; None:</span>
+<span class="line-any" title="Any Types on this line: 
+Explicit (x1)">        if self.db_conn:</span>
+<span class="line-any" title="Any Types on this line: 
+Explicit (x3)">            self.db_conn.close()</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">class PostgresExtractor:</span>
+<span class="line-precise" title="No Anys on this line!">    SQL_MOVIES = '''</span>
+<span class="line-empty" title="No Anys on this line!">        SELECT</span>
+<span class="line-empty" title="No Anys on this line!">            "content"."film_work"."id",</span>
+<span class="line-empty" title="No Anys on this line!">            "content"."film_work"."id" AS "_id",</span>
+<span class="line-empty" title="No Anys on this line!">            "content"."film_work"."rating" AS "imdb_rating",</span>
+<span class="line-empty" title="No Anys on this line!">            "content"."film_work"."title",</span>
+<span class="line-empty" title="No Anys on this line!">            COALESCE(</span>
+<span class="line-empty" title="No Anys on this line!">                "content"."film_work"."description",</span>
+<span class="line-empty" title="No Anys on this line!">                ''</span>
+<span class="line-empty" title="No Anys on this line!">            ) AS "description",</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">            COALESCE (</span>
+<span class="line-empty" title="No Anys on this line!">                ARRAY_AGG( DISTINCT "content"."genre"."name" ),</span>
+<span class="line-empty" title="No Anys on this line!">                '{}'</span>
+<span class="line-empty" title="No Anys on this line!">            ) AS "genre",</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">            COALESCE(</span>
+<span class="line-empty" title="No Anys on this line!">                ARRAY_AGG( DISTINCT "content"."person"."full_name") </span>
+<span class="line-empty" title="No Anys on this line!">                FILTER (WHERE "content"."person_film_work"."role" = 'director'),</span>
+<span class="line-empty" title="No Anys on this line!">                '{}'</span>
+<span class="line-empty" title="No Anys on this line!">            ) AS "director",</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">            COALESCE(</span>
+<span class="line-empty" title="No Anys on this line!">                ARRAY_AGG( DISTINCT "content"."person"."full_name") </span>
+<span class="line-empty" title="No Anys on this line!">                FILTER (WHERE "content"."person_film_work"."role" = 'actor'),</span>
+<span class="line-empty" title="No Anys on this line!">                '{}'</span>
+<span class="line-empty" title="No Anys on this line!">            ) AS "actors_names",</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">            COALESCE(</span>
+<span class="line-empty" title="No Anys on this line!">                ARRAY_AGG( DISTINCT "content"."person"."full_name") </span>
+<span class="line-empty" title="No Anys on this line!">                FILTER (WHERE "content"."person_film_work"."role" = 'writer'),</span>
+<span class="line-empty" title="No Anys on this line!">                '{}'</span>
+<span class="line-empty" title="No Anys on this line!">            ) AS "writers_names",</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">            COALESCE (</span>
+<span class="line-empty" title="No Anys on this line!">                JSONB_AGG(</span>
+<span class="line-empty" title="No Anys on this line!">                    DISTINCT jsonb_build_object(</span>
+<span class="line-empty" title="No Anys on this line!">                        'id', "content"."person"."id",</span>
+<span class="line-empty" title="No Anys on this line!">                        'name', "content"."person"."full_name"</span>
+<span class="line-empty" title="No Anys on this line!">                    )</span>
+<span class="line-empty" title="No Anys on this line!">                ) FILTER (WHERE "content"."person_film_work"."role" = 'actor'),</span>
+<span class="line-empty" title="No Anys on this line!">                '[]'</span>
+<span class="line-empty" title="No Anys on this line!">            ) AS "actors",</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">            COALESCE (</span>
+<span class="line-empty" title="No Anys on this line!">                JSONB_AGG(</span>
+<span class="line-empty" title="No Anys on this line!">                    DISTINCT jsonb_build_object(</span>
+<span class="line-empty" title="No Anys on this line!">                        'id', "content"."person"."id",</span>
+<span class="line-empty" title="No Anys on this line!">                        'name', "content"."person"."full_name"</span>
+<span class="line-empty" title="No Anys on this line!">                    )</span>
+<span class="line-empty" title="No Anys on this line!">                ) FILTER (WHERE "content"."person_film_work"."role" = 'writer'),</span>
+<span class="line-empty" title="No Anys on this line!">                '[]'</span>
+<span class="line-empty" title="No Anys on this line!">            ) AS "writers"</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!">        FROM "content"."film_work"</span>
+<span class="line-empty" title="No Anys on this line!">        LEFT OUTER JOIN "content"."genre_film_work" </span>
+<span class="line-empty" title="No Anys on this line!">            ON ("content"."film_work"."id" = "content"."genre_film_work"."film_work_id")</span>
+<span class="line-empty" title="No Anys on this line!">        LEFT OUTER JOIN "content"."genre" </span>
+<span class="line-empty" title="No Anys on this line!">            ON ("content"."genre_film_work"."genre_id" = "content"."genre"."id")</span>
+<span class="line-empty" title="No Anys on this line!">        LEFT OUTER JOIN "content"."person_film_work" </span>
+<span class="line-empty" title="No Anys on this line!">            ON ("content"."film_work"."id" = "content"."person_film_work"."film_work_id")</span>
+<span class="line-empty" title="No Anys on this line!">        LEFT OUTER JOIN "content"."person" </span>
+<span class="line-empty" title="No Anys on this line!">            ON ("content"."person_film_work"."person_id" = "content"."person"."id")</span>
+<span class="line-empty" title="No Anys on this line!">    '''</span>
+<span class="line-precise" title="No Anys on this line!">    SQL_GENRES = '''</span>
+<span class="line-empty" title="No Anys on this line!">        SELECT </span>
+<span class="line-empty" title="No Anys on this line!">            "content"."genre"."id", </span>
+<span class="line-empty" title="No Anys on this line!">            "content"."genre"."id" AS "_id", </span>
+<span class="line-empty" title="No Anys on this line!">            "content"."genre"."name", </span>
+<span class="line-empty" title="No Anys on this line!">            "content"."genre"."description"  </span>
+<span class="line-empty" title="No Anys on this line!">        FROM "content"."genre"</span>
+<span class="line-empty" title="No Anys on this line!">    '''</span>
+<span class="line-precise" title="No Anys on this line!">    SQL_PERSONS = '''</span>
+<span class="line-empty" title="No Anys on this line!">        SELECT "content"."person"."id", "content"."person"."id" AS "_id", "content"."person"."full_name" </span>
+<span class="line-empty" title="No Anys on this line!">        FROM "content"."person"</span>
+<span class="line-empty" title="No Anys on this line!">    '''</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x1)">    def __init__(self, connection: psycopg2.extensions.connection, chunk_size: int = 100) -&gt; None:</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x2)">        self.conn = connection</span>
+<span class="line-precise" title="No Anys on this line!">        self.chunk_size = chunk_size</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x2)">    @backoff()</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x2)">    def _fetch_chunked(self, sql: str, params: Union[tuple, None] = None) -&gt; Iterator:</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x1)">        if self.conn:</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x4)">            with self.conn.cursor() as cur:</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x3)
+Omitted Generics (x1)">                cur.execute(sql, params)</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x5)">                while chunk := cur.fetchmany(self.chunk_size):</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x1)">                    yield chunk</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x1)">    def extract_table_data(self, index_name: str, before_date: str,</span>
+<span class="line-precise" title="No Anys on this line!">                           last_upload_id: Union[str, None] = None) -&gt; Iterator:</span>
+<span class="line-precise" title="No Anys on this line!">        params = [before_date]</span>
+<span class="line-precise" title="No Anys on this line!">        if index_name == 'movies':</span>
+<span class="line-precise" title="No Anys on this line!">            sql = self.SQL_MOVIES + 'WHERE "content"."film_work"."modified" &lt;= %s'</span>
+<span class="line-precise" title="No Anys on this line!">        elif index_name == 'genres':</span>
+<span class="line-precise" title="No Anys on this line!">            sql = self.SQL_GENRES + 'WHERE "content"."genre"."modified" &lt;= %s'</span>
+<span class="line-empty" title="No Anys on this line!">        else:</span>
+<span class="line-precise" title="No Anys on this line!">            sql = self.SQL_PERSONS + 'WHERE "content"."person"."modified" &lt;= %s'</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">        if last_upload_id:</span>
+<span class="line-precise" title="No Anys on this line!">            params += [last_upload_id]</span>
+<span class="line-precise" title="No Anys on this line!">            if index_name == 'movies':</span>
+<span class="line-precise" title="No Anys on this line!">                sql += 'AND "content"."film_work"."id" &gt; %s'</span>
+<span class="line-precise" title="No Anys on this line!">            elif index_name == 'genres':</span>
+<span class="line-precise" title="No Anys on this line!">                sql += 'AND "content"."genre"."id" &gt; %s'</span>
+<span class="line-empty" title="No Anys on this line!">            else:</span>
+<span class="line-precise" title="No Anys on this line!">                sql += 'AND "content"."person"."id" &gt; %s'</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">        if index_name == 'movies':</span>
+<span class="line-precise" title="No Anys on this line!">            sql += ' GROUP BY "content"."film_work"."id" ORDER BY "content"."film_work"."id" ASC;'</span>
+<span class="line-precise" title="No Anys on this line!">        elif index_name == 'genres':</span>
+<span class="line-precise" title="No Anys on this line!">            sql += ' GROUP BY "content"."genre"."id" ORDER BY "content"."genre"."id" ASC;'</span>
+<span class="line-empty" title="No Anys on this line!">        else:</span>
+<span class="line-precise" title="No Anys on this line!">            sql += ' GROUP BY "content"."person"."id" ORDER BY "content"."person"."id" ASC;'</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x3)">        logger.info(sql)</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x2)">        return self._fetch_chunked(sql=sql, params=tuple(params))</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x1)">    def get_updated_film_works(self, updated_after: str) -&gt; Iterator:</span>
+<span class="line-precise" title="No Anys on this line!">        sql = self.SQL_MOVIES + (</span>
+<span class="line-precise" title="No Anys on this line!">            'WHERE "content"."film_work"."id" IN ('</span>
+<span class="line-empty" title="No Anys on this line!">            'SELECT film_work.id'</span>
+<span class="line-empty" title="No Anys on this line!">            'FROM film_work'</span>
+<span class="line-empty" title="No Anys on this line!">            'WHERE modified &gt; %s)'</span>
+<span class="line-empty" title="No Anys on this line!">        )</span>
+<span class="line-precise" title="No Anys on this line!">        sql += ' GROUP BY "content"."film_work"."id" ORDER BY "content"."film_work"."id" ASC;'</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x2)">        return self._fetch_chunked(sql=sql, params=(updated_after,))</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x1)">    def get_updated_film_works_person(self, updated_after: str) -&gt; Iterator:</span>
+<span class="line-precise" title="No Anys on this line!">        sql = self.SQL_MOVIES + (</span>
+<span class="line-precise" title="No Anys on this line!">            'WHERE "content"."film_work"."id" IN ('</span>
+<span class="line-empty" title="No Anys on this line!">            'SELECT film_work.id'</span>
+<span class="line-empty" title="No Anys on this line!">            'FROM person'</span>
+<span class="line-empty" title="No Anys on this line!">            'LEFT JOIN person_film_work ON person_film_work.person_id = person.id'</span>
+<span class="line-empty" title="No Anys on this line!">            'LEFT JOIN film_work ON film_work.id = person_film_work.film_work_id'</span>
+<span class="line-empty" title="No Anys on this line!">            'WHERE person.modified &gt; %s)'</span>
+<span class="line-empty" title="No Anys on this line!">        )</span>
+<span class="line-precise" title="No Anys on this line!">        sql += ' GROUP BY "content"."film_work"."id" ORDER BY "content"."film_work"."id" ASC;'</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x2)">        return self._fetch_chunked(sql=sql, params=(updated_after,))</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x1)">    def get_updated_film_works_genre(self, updated_after: str) -&gt; Iterator:</span>
+<span class="line-precise" title="No Anys on this line!">        sql = self.SQL_MOVIES + (</span>
+<span class="line-precise" title="No Anys on this line!">            'WHERE "content"."film_work"."id" IN ('</span>
+<span class="line-empty" title="No Anys on this line!">            'SELECT film_work.id'</span>
+<span class="line-empty" title="No Anys on this line!">            'FROM genre'</span>
+<span class="line-empty" title="No Anys on this line!">            'LEFT JOIN genre_film_work ON genre_film_work.genre_id = genre.id'</span>
+<span class="line-empty" title="No Anys on this line!">            'LEFT JOIN film_work ON film_work.id = genre_film_work.film_work_id'</span>
+<span class="line-empty" title="No Anys on this line!">            'WHERE genre.modified &gt; %s)'</span>
+<span class="line-empty" title="No Anys on this line!">        )</span>
+<span class="line-precise" title="No Anys on this line!">        sql += ' GROUP BY "content"."film_work"."id" ORDER BY "content"."film_work"."id" ASC;'</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x2)">        return self._fetch_chunked(sql=sql, params=(updated_after,))</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x1)">    def get_updated_genres(self, updated_after: str) -&gt; Iterator:</span>
+<span class="line-precise" title="No Anys on this line!">        sql = self.SQL_GENRES + 'WHERE "content"."genre"."modified" &gt; %s'</span>
+<span class="line-precise" title="No Anys on this line!">        sql += 'ORDER BY "content"."genre"."id" ASC;'</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x2)">        return self._fetch_chunked(sql=sql, params=(updated_after,))</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-imprecise" title="Any Types on this line: 
+Omitted Generics (x1)">    def get_updated_persons(self, updated_after: str) -&gt; Iterator:</span>
+<span class="line-precise" title="No Anys on this line!">        sql = self.SQL_GENRES + 'WHERE "content"."person"."modified" &gt; %s'</span>
+<span class="line-precise" title="No Anys on this line!">        sql += 'ORDER BY "content"."person"."id" ASC;'</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x2)">        return self._fetch_chunked(sql=sql, params=(updated_after,))</span>
+</pre></td>
+</tr></tbody>
+</table>
+</body>
+</html>

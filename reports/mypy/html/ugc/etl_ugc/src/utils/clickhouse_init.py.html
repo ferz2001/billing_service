@@ -1,0 +1,32 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" type="text/css" href="../../../../../mypy-html.css">
+</head>
+<body>
+<h2>ugc.etl_ugc.src.utils.clickhouse_init</h2>
+<table>
+<caption>ugc\etl_ugc\src\utils\clickhouse_init.py</caption>
+<tbody><tr>
+<td class="table-lines"><pre><span id="L1" class="lineno"><a class="lineno" href="#L1">1</a></span>
+<span id="L2" class="lineno"><a class="lineno" href="#L2">2</a></span>
+<span id="L3" class="lineno"><a class="lineno" href="#L3">3</a></span>
+<span id="L4" class="lineno"><a class="lineno" href="#L4">4</a></span>
+<span id="L5" class="lineno"><a class="lineno" href="#L5">5</a></span>
+<span id="L6" class="lineno"><a class="lineno" href="#L6">6</a></span>
+<span id="L7" class="lineno"><a class="lineno" href="#L7">7</a></span>
+</pre></td>
+<td class="table-code"><pre><span class="line-any" title="No Anys on this line!">from clickhouse_driver import Client</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x3)">client = Client(host='localhost')</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x3)">client.execute('CREATE TABLE default.movies_events '</span>
+<span class="line-empty" title="No Anys on this line!">               'ON CLUSTER company_cluster (id Int64, movie_timestamp Int64, movie_id String, user_id Int64) '</span>
+<span class="line-empty" title="No Anys on this line!">               'Engine=MergeTree() ORDER BY id')</span>
+</pre></td>
+</tr></tbody>
+</table>
+</body>
+</html>

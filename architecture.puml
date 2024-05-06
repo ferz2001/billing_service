@@ -1,0 +1,155 @@
+@startuml
+
+!include <logos/kafka>
+!include <cloudinsight/redis>
+!include <cloudinsight/postgresql>
+!include <cloudinsight/elasticsearch>
+!include <cloudinsight/python>
+!include <cloudinsight/nginx>
+
+title Архитектура сервиса фильмов
+
+skinparam actorStyle awesome
+:Пользователь: as Client
+
+
+
+component Auth_API_Service [
+    <$python> Auth Service
+    ===
+    Регистрация новых пользователей
+    вход и выход из аккаунта
+    обновление токена
+    история входов
+    редактирование ролей
+    проверка наличия роли
+]
+component Movies_API_Service [
+     <$python> Cinema Service
+    ===
+    Предоставляет инф
+    о фильмах,
+    личный кабинет,
+    админ панель
+]
+
+
+component Admin_panel [
+    Admin Panel
+    ===
+    Админка для менеджеров
+    сервиса
+
+]
+
+component Notification [
+    Notification Service
+    ===
+    Сервис оповещения
+    пользователей
+]
+
+'component Postgres_to_ES [
+'    <$python> Postgres to ElasticSearch
+'    ===
+'    ETL данных о фильмах в
+'    формат, доступный ElasticSearch
+']
+'component Kafka [
+'    <$kafka>
+'    ===
+'
+'    Брокер сообщений
+']
+
+component Nginx [
+    <$nginx>
+    Nginx
+]
+
+'component Kafka_Click_House_ETL [
+'    <$python> Kafka to ClickHouse ETL
+'    ===
+'
+'    Получение сообщений от брокера
+'    Преобразование для ClickHouse
+'
+']
+database Postgres [
+    <$postgresql>Postgres
+    ===
+
+    Хранение сущностей Users,
+    Token Pairs,
+    Role
+]
+database Redis [
+    <$redis> Redis
+    ===
+
+    Хранение невалидных
+    access токенов
+]
+
+database Cache [
+    <$redis> Cache
+    ===
+
+    Кеширование ответов
+    на запросы пользователя
+]
+'database ElasticSearch [
+'    <$elasticsearch> ElasticSearch
+']
+'database ClickHouse [
+'    ClickHouse
+'    ===
+'
+'    Сохранение событий пользователя
+'    и последующий их анализ
+']
+
+component Billing_service [
+    Billing Service
+    ===
+
+    Оплата подписки пользователями
+
+]
+
+package UGC {
+    [ETL UGC] - [Kafka API]
+
+}
+
+
+
+Client --> Nginx
+
+Nginx --> Auth_API_Service
+Nginx --> Movies_API_Service
+Nginx --> Admin_panel
+
+Auth_API_Service <--> Postgres: Создание нового пользователя\nПроверка логина и пароля\nобновление токенов\nизменение user
+Auth_API_Service <-down-> Redis: Проверка токенов
+'
+'Movies_API_Service <-down-> Postgres: Сохранение, получение \nданных о фильмах,\n персонах, жанрах
+'Movies_API_Service -> Kafka: Отправка сообщения о действии\n пользователя
+Movies_API_Service <-down-> Cache: Кеширование запросов
+Movies_API_Service -down-> [Kafka API]
+'
+'
+'Kafka -down-> Kafka_Click_House_ETL: Получение сообщений
+'Kafka_Click_House_ETL -> ClickHouse: Сохранение данных события
+'
+'Postgres_to_ES -up-> Postgres: Получение данных о фильмах, персонах, жанрах
+'Postgres_to_ES -> ElasticSearch: Сохранение данных о фильмах для поиска
+'
+'
+Billing_service <-up-> Movies_API_Service
+Billing_service <-up-> Auth_API_Service
+Billing_service <-up-> Admin_panel
+Notification <-up- Admin_panel
+
+
+@enduml

@@ -1,0 +1,14 @@
+filebeat.inputs:
+- type: filestream
+  enabled: true
+  paths:
+    - /var/logs/movies_api/*
+  json:
+    keys_under_root: true
+    add_error_key: true
+  tags: ["movies_api"]
+
+
+output.logstash:
+  enabled: true
+  hosts: ["logstash:5045"]

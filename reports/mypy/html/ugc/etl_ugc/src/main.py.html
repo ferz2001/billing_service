@@ -1,0 +1,290 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" type="text/css" href="../../../../mypy-html.css">
+</head>
+<body>
+<h2>ugc.etl_ugc.src.main</h2>
+<table>
+<caption>ugc\etl_ugc\src\main.py</caption>
+<tbody><tr>
+<td class="table-lines"><pre><span id="L1" class="lineno"><a class="lineno" href="#L1">1</a></span>
+<span id="L2" class="lineno"><a class="lineno" href="#L2">2</a></span>
+<span id="L3" class="lineno"><a class="lineno" href="#L3">3</a></span>
+<span id="L4" class="lineno"><a class="lineno" href="#L4">4</a></span>
+<span id="L5" class="lineno"><a class="lineno" href="#L5">5</a></span>
+<span id="L6" class="lineno"><a class="lineno" href="#L6">6</a></span>
+<span id="L7" class="lineno"><a class="lineno" href="#L7">7</a></span>
+<span id="L8" class="lineno"><a class="lineno" href="#L8">8</a></span>
+<span id="L9" class="lineno"><a class="lineno" href="#L9">9</a></span>
+<span id="L10" class="lineno"><a class="lineno" href="#L10">10</a></span>
+<span id="L11" class="lineno"><a class="lineno" href="#L11">11</a></span>
+<span id="L12" class="lineno"><a class="lineno" href="#L12">12</a></span>
+<span id="L13" class="lineno"><a class="lineno" href="#L13">13</a></span>
+<span id="L14" class="lineno"><a class="lineno" href="#L14">14</a></span>
+<span id="L15" class="lineno"><a class="lineno" href="#L15">15</a></span>
+<span id="L16" class="lineno"><a class="lineno" href="#L16">16</a></span>
+<span id="L17" class="lineno"><a class="lineno" href="#L17">17</a></span>
+<span id="L18" class="lineno"><a class="lineno" href="#L18">18</a></span>
+<span id="L19" class="lineno"><a class="lineno" href="#L19">19</a></span>
+<span id="L20" class="lineno"><a class="lineno" href="#L20">20</a></span>
+<span id="L21" class="lineno"><a class="lineno" href="#L21">21</a></span>
+<span id="L22" class="lineno"><a class="lineno" href="#L22">22</a></span>
+<span id="L23" class="lineno"><a class="lineno" href="#L23">23</a></span>
+<span id="L24" class="lineno"><a class="lineno" href="#L24">24</a></span>
+<span id="L25" class="lineno"><a class="lineno" href="#L25">25</a></span>
+<span id="L26" class="lineno"><a class="lineno" href="#L26">26</a></span>
+<span id="L27" class="lineno"><a class="lineno" href="#L27">27</a></span>
+<span id="L28" class="lineno"><a class="lineno" href="#L28">28</a></span>
+<span id="L29" class="lineno"><a class="lineno" href="#L29">29</a></span>
+<span id="L30" class="lineno"><a class="lineno" href="#L30">30</a></span>
+<span id="L31" class="lineno"><a class="lineno" href="#L31">31</a></span>
+<span id="L32" class="lineno"><a class="lineno" href="#L32">32</a></span>
+<span id="L33" class="lineno"><a class="lineno" href="#L33">33</a></span>
+<span id="L34" class="lineno"><a class="lineno" href="#L34">34</a></span>
+<span id="L35" class="lineno"><a class="lineno" href="#L35">35</a></span>
+<span id="L36" class="lineno"><a class="lineno" href="#L36">36</a></span>
+<span id="L37" class="lineno"><a class="lineno" href="#L37">37</a></span>
+<span id="L38" class="lineno"><a class="lineno" href="#L38">38</a></span>
+<span id="L39" class="lineno"><a class="lineno" href="#L39">39</a></span>
+<span id="L40" class="lineno"><a class="lineno" href="#L40">40</a></span>
+<span id="L41" class="lineno"><a class="lineno" href="#L41">41</a></span>
+<span id="L42" class="lineno"><a class="lineno" href="#L42">42</a></span>
+<span id="L43" class="lineno"><a class="lineno" href="#L43">43</a></span>
+<span id="L44" class="lineno"><a class="lineno" href="#L44">44</a></span>
+<span id="L45" class="lineno"><a class="lineno" href="#L45">45</a></span>
+<span id="L46" class="lineno"><a class="lineno" href="#L46">46</a></span>
+<span id="L47" class="lineno"><a class="lineno" href="#L47">47</a></span>
+<span id="L48" class="lineno"><a class="lineno" href="#L48">48</a></span>
+<span id="L49" class="lineno"><a class="lineno" href="#L49">49</a></span>
+<span id="L50" class="lineno"><a class="lineno" href="#L50">50</a></span>
+<span id="L51" class="lineno"><a class="lineno" href="#L51">51</a></span>
+<span id="L52" class="lineno"><a class="lineno" href="#L52">52</a></span>
+<span id="L53" class="lineno"><a class="lineno" href="#L53">53</a></span>
+<span id="L54" class="lineno"><a class="lineno" href="#L54">54</a></span>
+<span id="L55" class="lineno"><a class="lineno" href="#L55">55</a></span>
+<span id="L56" class="lineno"><a class="lineno" href="#L56">56</a></span>
+<span id="L57" class="lineno"><a class="lineno" href="#L57">57</a></span>
+<span id="L58" class="lineno"><a class="lineno" href="#L58">58</a></span>
+<span id="L59" class="lineno"><a class="lineno" href="#L59">59</a></span>
+<span id="L60" class="lineno"><a class="lineno" href="#L60">60</a></span>
+<span id="L61" class="lineno"><a class="lineno" href="#L61">61</a></span>
+<span id="L62" class="lineno"><a class="lineno" href="#L62">62</a></span>
+<span id="L63" class="lineno"><a class="lineno" href="#L63">63</a></span>
+<span id="L64" class="lineno"><a class="lineno" href="#L64">64</a></span>
+<span id="L65" class="lineno"><a class="lineno" href="#L65">65</a></span>
+<span id="L66" class="lineno"><a class="lineno" href="#L66">66</a></span>
+<span id="L67" class="lineno"><a class="lineno" href="#L67">67</a></span>
+<span id="L68" class="lineno"><a class="lineno" href="#L68">68</a></span>
+<span id="L69" class="lineno"><a class="lineno" href="#L69">69</a></span>
+<span id="L70" class="lineno"><a class="lineno" href="#L70">70</a></span>
+<span id="L71" class="lineno"><a class="lineno" href="#L71">71</a></span>
+<span id="L72" class="lineno"><a class="lineno" href="#L72">72</a></span>
+<span id="L73" class="lineno"><a class="lineno" href="#L73">73</a></span>
+<span id="L74" class="lineno"><a class="lineno" href="#L74">74</a></span>
+<span id="L75" class="lineno"><a class="lineno" href="#L75">75</a></span>
+<span id="L76" class="lineno"><a class="lineno" href="#L76">76</a></span>
+<span id="L77" class="lineno"><a class="lineno" href="#L77">77</a></span>
+<span id="L78" class="lineno"><a class="lineno" href="#L78">78</a></span>
+<span id="L79" class="lineno"><a class="lineno" href="#L79">79</a></span>
+<span id="L80" class="lineno"><a class="lineno" href="#L80">80</a></span>
+<span id="L81" class="lineno"><a class="lineno" href="#L81">81</a></span>
+<span id="L82" class="lineno"><a class="lineno" href="#L82">82</a></span>
+<span id="L83" class="lineno"><a class="lineno" href="#L83">83</a></span>
+<span id="L84" class="lineno"><a class="lineno" href="#L84">84</a></span>
+<span id="L85" class="lineno"><a class="lineno" href="#L85">85</a></span>
+<span id="L86" class="lineno"><a class="lineno" href="#L86">86</a></span>
+<span id="L87" class="lineno"><a class="lineno" href="#L87">87</a></span>
+<span id="L88" class="lineno"><a class="lineno" href="#L88">88</a></span>
+<span id="L89" class="lineno"><a class="lineno" href="#L89">89</a></span>
+<span id="L90" class="lineno"><a class="lineno" href="#L90">90</a></span>
+<span id="L91" class="lineno"><a class="lineno" href="#L91">91</a></span>
+<span id="L92" class="lineno"><a class="lineno" href="#L92">92</a></span>
+<span id="L93" class="lineno"><a class="lineno" href="#L93">93</a></span>
+<span id="L94" class="lineno"><a class="lineno" href="#L94">94</a></span>
+<span id="L95" class="lineno"><a class="lineno" href="#L95">95</a></span>
+<span id="L96" class="lineno"><a class="lineno" href="#L96">96</a></span>
+<span id="L97" class="lineno"><a class="lineno" href="#L97">97</a></span>
+<span id="L98" class="lineno"><a class="lineno" href="#L98">98</a></span>
+<span id="L99" class="lineno"><a class="lineno" href="#L99">99</a></span>
+<span id="L100" class="lineno"><a class="lineno" href="#L100">100</a></span>
+<span id="L101" class="lineno"><a class="lineno" href="#L101">101</a></span>
+<span id="L102" class="lineno"><a class="lineno" href="#L102">102</a></span>
+<span id="L103" class="lineno"><a class="lineno" href="#L103">103</a></span>
+<span id="L104" class="lineno"><a class="lineno" href="#L104">104</a></span>
+<span id="L105" class="lineno"><a class="lineno" href="#L105">105</a></span>
+<span id="L106" class="lineno"><a class="lineno" href="#L106">106</a></span>
+<span id="L107" class="lineno"><a class="lineno" href="#L107">107</a></span>
+</pre></td>
+<td class="table-code"><pre><span class="line-precise" title="No Anys on this line!">import logging</span>
+<span class="line-precise" title="No Anys on this line!">from logging import config as logging_config</span>
+<span class="line-precise" title="No Anys on this line!">from time import sleep</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">import orjson</span>
+<span class="line-precise" title="No Anys on this line!">import redis</span>
+<span class="line-precise" title="No Anys on this line!">from pydantic import RootModel</span>
+<span class="line-any" title="No Anys on this line!">from client.clickhouse_client import ClickHouseColumnDBClient</span>
+<span class="line-any" title="No Anys on this line!">from client.kafka_client import KafkaMessageBrokerConsumer</span>
+<span class="line-any" title="No Anys on this line!">from core.config import (</span>
+<span class="line-empty" title="No Anys on this line!">    clickhouse_settings,</span>
+<span class="line-empty" title="No Anys on this line!">    etl_settings,</span>
+<span class="line-empty" title="No Anys on this line!">    kafka_settings,</span>
+<span class="line-empty" title="No Anys on this line!">    redis_settings,</span>
+<span class="line-empty" title="No Anys on this line!">)</span>
+<span class="line-any" title="No Anys on this line!">from core.logger import LOGGING</span>
+<span class="line-any" title="No Anys on this line!">from extractor import Extractor</span>
+<span class="line-any" title="No Anys on this line!">from helpers.graceful_kill import GracefulKiller</span>
+<span class="line-any" title="No Anys on this line!">from loader import Loader</span>
+<span class="line-any" title="No Anys on this line!">from models.events import data_models</span>
+<span class="line-any" title="No Anys on this line!">from state_redis import RedisStorage, State</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-any" title="Any Types on this line: 
+Explicit (x1)
+Unimported (x1)">logging_config.dictConfig(LOGGING)</span>
+<span class="line-precise" title="No Anys on this line!">logger = logging.getLogger(__name__)</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">class ETLProcess:</span>
+<span class="line-any" title="No Anys on this line!">    def __init__(self):</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x3)">        self.redis_client = self.create_redis_client()</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x3)">        self.db_client = self.create_db_client()</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x3)">        self.message_broker = self.create_message_broker()</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x3)">        self.killer = GracefulKiller()</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-any" title="No Anys on this line!">    def create_redis_client(self):</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x39)">        return redis.Redis(</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x4)">            host=redis_settings.host, port=redis_settings.port, decode_responses=True,</span>
+<span class="line-empty" title="No Anys on this line!">        )</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-any" title="No Anys on this line!">    def create_db_client(self):</span>
+<span class="line-imprecise" title="Any Types on this line: 
+Unimported (x1)">        clickhouse_dsn = {</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x2)">            "host": clickhouse_settings.host,</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x2)">            "port": clickhouse_settings.port,</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x2)">            "user": clickhouse_settings.user,</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x2)">            "password": clickhouse_settings.password,</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x2)">            "database": clickhouse_settings.database,</span>
+<span class="line-empty" title="No Anys on this line!">        }</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x4)">        db_client = ClickHouseColumnDBClient(**clickhouse_dsn)</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x3)">        db_client.connect()</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x1)">        return db_client</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-any" title="No Anys on this line!">    def create_message_broker(self):</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x7)">        kafka_host, kafka_port = kafka_settings.bootstrap_servers[0].split(":")</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x2)">        logger.info(f'@@@@@@@@@@@@@   Kafka host: {kafka_host}, port: {kafka_port}   @@@@@@@@@@@@@@@@@@@@@')</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x3)">        message_broker = KafkaMessageBrokerConsumer()</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x3)">        message_broker.connect(</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x1)">            kafka_host,</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x1)">            kafka_port,</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x2)">            etl_settings.broker_identifier,</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x2)">            batch_size=etl_settings.batch_size,</span>
+<span class="line-precise" title="Any Types on this line: 
+Explicit (x1)">            value_deserializer=orjson.loads,</span>
+<span class="line-empty" title="No Anys on this line!">        )</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x5)">        message_broker.subscribe(kafka_settings.topics)</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x1)">        return message_broker</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-any" title="No Anys on this line!">    def run_etl(self):</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x3)
+Unannotated (x1)">        storage = RedisStorage(self.redis_client)</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x4)">        state_instance = State(storage)</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x3)
+Unannotated (x1)">        extractor = Extractor(self.message_broker)</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x3)
+Unannotated (x1)">        loader = Loader(self.db_client)</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x4)">        data_batch = state_instance.get_state("event_etl_data")</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x1)">        if not data_batch:</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x4)">            data_batch = extractor.extract()</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x4)">            state_instance.set_state("event_etl_data", data_batch)</span>
+<span class="line-any" title="No Anys on this line!">            logger.debug("Extracting data")</span>
+<span class="line-empty" title="No Anys on this line!">        else:</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x1)">            logger.warning("Using cached data! %s", data_batch)</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x1)">        if data_batch:</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x2)">            for data_type in data_batch:</span>
+<span class="line-any" title="Any Types on this line: 
+Omitted Generics (x2)
+Unimported (x3)">                data_model: RootModel = data_models[data_type]</span>
+<span class="line-any" title="Any Types on this line: 
+Omitted Generics (x1)">                logger.debug(f'DataModel: {data_model}')</span>
+<span class="line-any" title="Any Types on this line: 
+Omitted Generics (x4)
+Explicit (x2)
+Unimported (x3)">                topic_data = data_model.model_validate(data_batch[data_type])</span>
+<span class="line-any" title="Any Types on this line: 
+Omitted Generics (x3)
+Explicit (x2)">                logger.info(topic_data.model_dump())</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x3)
+Omitted Generics (x3)
+Explicit (x2)">                loader.bulk_load(topic_data.model_dump(), table_name='default.ugc')</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x3)">            extractor.confirm()</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x3)">            state_instance.set_state("event_etl_data", None)</span>
+<span class="line-any" title="No Anys on this line!">            logger.info("Data loaded")</span>
+<span class="line-empty" title="No Anys on this line!">        else:</span>
+<span class="line-any" title="No Anys on this line!">            logger.info("No data to process")</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-any" title="No Anys on this line!">    def run(self):</span>
+<span class="line-any" title="Any Types on this line: 
+Unimported (x2)">        while not self.killer.kill_now:</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x2)">            self.run_etl()</span>
+<span class="line-any" title="No Anys on this line!">            sleep(1)</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x3)">        self.message_broker.disconnect()</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x3)">        self.db_client.disconnect()</span>
+<span class="line-any" title="No Anys on this line!">        logger.info("ETL process finished")</span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-empty" title="No Anys on this line!"></span>
+<span class="line-precise" title="No Anys on this line!">if __name__ == "__main__":</span>
+<span class="line-precise" title="No Anys on this line!">    logging.basicConfig(level=logging.DEBUG)</span>
+<span class="line-precise" title="No Anys on this line!">    etl_process = ETLProcess()</span>
+<span class="line-any" title="Any Types on this line: 
+Unannotated (x2)">    etl_process.run()</span>
+</pre></td>
+</tr></tbody>
+</table>
+</body>
+</html>
